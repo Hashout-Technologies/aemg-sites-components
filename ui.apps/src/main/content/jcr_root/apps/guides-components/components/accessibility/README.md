@@ -10,7 +10,6 @@ Accessibility helper component written in HTL to provide user controls for impro
   * Low contrast mode
   * Reset all accessibility settings
 * Configurable icons for each menu item
-* Accessible button and menu structure with ARIA attributes
 
 ### Configuration Properties
 1. `./accessibilityIcon` - Path to the main accessibility icon (DAM asset)
