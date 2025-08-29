@@ -1,0 +1,3 @@
+{
+"service.account.details": "$[secret:SERVICE_ACCOUNT_DETAILS]",
+}
