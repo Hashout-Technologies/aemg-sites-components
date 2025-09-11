@@ -387,7 +387,7 @@ html.adobeguides-light-contrast
     }
 
     #toc-content.show {
-      height: unset!important;
+      height: unset !important;
     }
 
     .toolbar.above-title.mobile {
@@ -520,6 +520,15 @@ div.topic table {
   border-spacing: 0;
 }
 
+.base-topic-page-section div.topic .table {
+  display: block;
+}
+
+.base-topic-page-section div.topic table {
+  border-collapse: unset;
+}
+// Table End
+
 @media (max-width: 767px) {
   .adobeguides-text-size {
     .version-selector {
@@ -537,4 +546,8 @@ div.topic table {
       gap: unset !important;
     }
   }
+}
+
+html#adobeguides-dark-contrast .footer .gu-footer_social-icon {
+  filter: invert(80%) brightness(95%) contrast(90%);
 }
