@@ -367,8 +367,20 @@ div.topic table {
 }
 
 .gu-header_search-container .cmp-search__results {
-  margin-top: 0.25rem!important;
+  margin-top: 0.25rem !important;
   scrollbar-width: thin;
-  border-top-left-radius: 0.5rem!important;
-  border-bottom-left-radius: 0.5rem!important;
+  border-top-left-radius: 0.5rem !important;
+  border-bottom-left-radius: 0.5rem !important;
+}
+
+.gu-pre-next-topic_link {
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  width: 20ch;
+}
+@media (max-width: 768px) {
+  .gu-pre-next-topic_link {
+    width: 24ch;
+  }
 }
