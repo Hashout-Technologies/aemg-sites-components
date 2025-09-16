@@ -2,14 +2,36 @@ document.addEventListener("DOMContentLoaded", function () {
     const dropdownContainer = document.querySelector(".tag-filter .dropdown__container");
     const productCards = document.querySelectorAll(".gu-product-card");
     const noResultsMessage = document.querySelector(".gu-product-no-results");
-    
+    const paginationContainer = document.querySelector(".gu-product-pagination");
+    const prevBtn = document.querySelector(".gu-pagination-prev");
+    const nextBtn = document.querySelector(".gu-pagination-next");
+    const currentSpan = document.querySelector(".gu-pagination-current");
+    const totalSpan = document.querySelector(".gu-pagination-total");
+
     if (!dropdownContainer || productCards.length === 0) {
-        return; 
+        return;
     }
-    
+
+    // Pagination configuration/state
+    window.__productCardPagination__ = {
+        PAGE_SIZE: 6,
+        currentPage: 1,
+        selectedTag: "all",
+        nodes: {
+            paginationContainer,
+            prevBtn,
+            nextBtn,
+            currentSpan,
+            totalSpan,
+            noResultsMessage
+        }
+    };
+
     attachDropdownEvents();
-    
-    filterProducts("all", productCards, noResultsMessage);
+    attachPaginationEvents(productCards);
+
+    // Initial render
+    paginatedFilterProducts("all", productCards);
 });
 
 function attachDropdownEvents() {
@@ -55,7 +77,7 @@ function attachDropdownEvents() {
         updateDropdownIcon();
 
         // Always run filtering, including when "all" is selected
-        filterProducts(selectedTag, productCards, noResultsMessage);
+        paginatedFilterProducts(selectedTag, productCards);
     });
     
     document.addEventListener("click", function(event) {
@@ -87,33 +109,114 @@ function updateDropdownIcon() {
     }
 }
 
-function filterProducts(selectedTag, productCards, noResultsMessage) {
-    let visibleCount = 0;
-    
+// New: Pagination + Filtering integration
+function paginatedFilterProducts(selectedTag, productCards) {
+    const state = window.__productCardPagination__;
+    if (!state) return;
+
+    // Reset to page 1 when filter changes
+    if (state.selectedTag !== selectedTag) {
+        state.currentPage = 1;
+    }
+    state.selectedTag = selectedTag;
+
+    const filtered = getFilteredCards(selectedTag, productCards);
+    const total = filtered.length;
+    const totalPages = Math.max(1, Math.ceil(total / state.PAGE_SIZE));
+    state.currentPage = clamp(state.currentPage, 1, totalPages);
+
+    // Update cards visibility for current page
+    showOnlyPage(filtered, productCards, state.currentPage, state.PAGE_SIZE);
+
+    // Update UI elements (pagination + no results)
+    updatePaginationUI(total, state.currentPage, totalPages);
+}
+
+function getFilteredCards(selectedTag, productCards) {
+    const result = [];
     productCards.forEach(function(card) {
         const cardTags = card.getAttribute("data-tags");
-        let shouldShow = false;
-        
         if (selectedTag === "all") {
-            shouldShow = true;
+            result.push(card);
         } else if (cardTags) {
-            const tags = cardTags.split(",").map(tag => tag.trim());
-            shouldShow = tags.includes(selectedTag);
+            const tags = cardTags.split(",").map(function(tag) { return tag.trim(); });
+            if (tags.includes(selectedTag)) {
+                result.push(card);
+            }
         }
-        
-        if (shouldShow) {
+    });
+    return result;
+}
+
+function showOnlyPage(filteredCards, allCards, page, pageSize) {
+    const start = (page - 1) * pageSize;
+    const end = start + pageSize;
+
+    const setToShow = new Set(filteredCards.slice(start, end));
+    allCards.forEach(function(card) {
+        if (setToShow.has(card)) {
             card.style.display = "flex";
-            visibleCount++;
         } else {
             card.style.display = "none";
         }
     });
-    
+}
+
+function updatePaginationUI(totalFiltered, currentPage, totalPages) {
+    const state = window.__productCardPagination__;
+    if (!state) return;
+    const { paginationContainer, prevBtn, nextBtn, currentSpan, totalSpan, noResultsMessage } = state.nodes;
+
+    // No results handling
     if (noResultsMessage) {
-        if (visibleCount === 0) {
+        if (totalFiltered === 0) {
             noResultsMessage.style.display = "block";
         } else {
             noResultsMessage.style.display = "none";
         }
     }
+
+    // Hide pagination if no results or single page
+    if (!paginationContainer) return;
+    if (totalFiltered === 0 || totalPages <= 1) {
+        paginationContainer.style.display = "none";
+        return;
+    }
+
+    paginationContainer.style.display = "flex";
+    if (currentSpan) currentSpan.textContent = String(currentPage);
+    if (totalSpan) totalSpan.textContent = String(totalPages);
+
+    if (prevBtn) prevBtn.disabled = currentPage <= 1;
+    if (nextBtn) nextBtn.disabled = currentPage >= totalPages;
+}
+
+function attachPaginationEvents(productCards) {
+    const state = window.__productCardPagination__;
+    if (!state) return;
+    const { prevBtn, nextBtn } = state.nodes;
+
+    if (prevBtn) {
+        prevBtn.addEventListener("click", function() {
+            const filtered = getFilteredCards(state.selectedTag, productCards);
+            const totalPages = Math.max(1, Math.ceil(filtered.length / state.PAGE_SIZE));
+            state.currentPage = clamp(state.currentPage - 1, 1, totalPages);
+            showOnlyPage(filtered, productCards, state.currentPage, state.PAGE_SIZE);
+            updatePaginationUI(filtered.length, state.currentPage, totalPages);
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener("click", function() {
+            const filtered = getFilteredCards(state.selectedTag, productCards);
+            const totalPages = Math.max(1, Math.ceil(filtered.length / state.PAGE_SIZE));
+            state.currentPage = clamp(state.currentPage + 1, 1, totalPages);
+            showOnlyPage(filtered, productCards, state.currentPage, state.PAGE_SIZE);
+            updatePaginationUI(filtered.length, state.currentPage, totalPages);
+        });
+    }
+}
+
+function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
 }
