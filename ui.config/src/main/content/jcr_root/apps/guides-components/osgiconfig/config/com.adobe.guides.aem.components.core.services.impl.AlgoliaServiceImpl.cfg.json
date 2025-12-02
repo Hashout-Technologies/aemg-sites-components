@@ -1,0 +1,5 @@
+{
+  "applicationId": "YOUR_ACTUAL_APP_ID",
+  "apiKey": "YOUR_ACTUAL_API_KEY",
+  "indexName": "aem_local_index"
+}

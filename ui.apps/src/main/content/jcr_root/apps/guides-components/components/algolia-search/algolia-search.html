@@ -1,0 +1,22 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.css@7/themes/satellite-min.css">
+<script src="https://cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/instantsearch.js@4"></script>
+
+<sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html">
+    <sly data-sly-call="${clientlib.all @ categories='guides-components.algolia'}"/>
+</sly>
+
+<div class="algolia-search-container">
+    <div class="search-header">
+        <h3>Site Search</h3>
+        <div id="searchbox"></div>
+    </div>
+
+    <div class="search-results-wrapper">
+        <div id="stats"></div>
+
+        <div id="hits"></div>
+
+        <div id="pagination"></div>
+    </div>
+</div>

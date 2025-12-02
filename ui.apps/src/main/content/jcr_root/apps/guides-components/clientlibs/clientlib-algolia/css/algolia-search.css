@@ -1,0 +1,36 @@
+.algolia-search-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+#searchbox {
+    margin-bottom: 20px;
+}
+
+#hits article {
+    border-bottom: 1px solid #eee;
+    padding: 15px 0;
+}
+
+#hits article h4 {
+    margin: 0 0 5px;
+    font-size: 18px;
+}
+
+#hits article a {
+    color: #0077c8;
+    text-decoration: none;
+}
+
+#stats {
+    font-size: 12px;
+    color: #777;
+    margin-bottom: 10px;
+}
+
+/* Highlighted text styling */
+.ais-Highlight-highlighted {
+    background: #ffeb3b;
+    padding: 0 2px;
+}

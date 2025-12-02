@@ -151,6 +151,12 @@
             <version>1.4.4</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.algolia</groupId>
+            <artifactId>algoliasearch-apache-uber</artifactId>
+            <version>3.16.11</version>
+        </dependency>
     </dependencies>
 
       <!-- Additional Profiles for Cloud Service vs. 6.x -->
